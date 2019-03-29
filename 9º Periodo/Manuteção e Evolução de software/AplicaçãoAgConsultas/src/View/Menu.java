@@ -155,7 +155,7 @@ public class Menu extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_imagemSairMouseClicked
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel imagemSair;
     private javax.swing.JLabel imgNewConsulta;

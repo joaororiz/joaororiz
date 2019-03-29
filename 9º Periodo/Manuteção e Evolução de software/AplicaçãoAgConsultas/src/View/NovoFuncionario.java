@@ -171,7 +171,7 @@ public class NovoFuncionario extends javax.swing.JFrame {
 
         // fazendo a validação dos dados
         if ((textNome.getText().isEmpty()) || (textCPF.getText().isEmpty()) || (textEmail.getText().isEmpty()) || (textTelefone.getText().isEmpty())) {
-            JOptionPane.showMessageDialog(null, "Os campos não podem estar vazios");
+            JOptionPane.showMessageDialog(null, "Os campos não podem estar vázios");
         } else if (validarEmail(textEmail.getText().toString())) {
             UsuarioBEAN usuarios = new UsuarioBEAN();
             usuarios.setNome(textNome.getText());

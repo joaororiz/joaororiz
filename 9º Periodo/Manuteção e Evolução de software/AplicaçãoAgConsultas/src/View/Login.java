@@ -1,9 +1,7 @@
 package View;
 
 import Dao.UsuarioDAO;
-import Modelo.UsuarioBEAN;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;

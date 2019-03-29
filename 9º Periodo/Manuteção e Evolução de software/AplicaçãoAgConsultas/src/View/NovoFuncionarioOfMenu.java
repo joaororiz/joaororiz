@@ -2,9 +2,6 @@ package View;
 
 import Dao.UsuarioDAO;
 import Modelo.UsuarioBEAN;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
@@ -208,7 +205,7 @@ public class NovoFuncionarioOfMenu extends javax.swing.JFrame {
                 textEmail.setText("");
                 textTelefone.setText("");
                 comboTipoUser.setSelectedIndex(0);
-                
+
                 new Menu().setVisible(true);
                 this.dispose();
             } else {
