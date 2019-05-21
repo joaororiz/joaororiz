@@ -166,7 +166,7 @@ public class Login extends javax.swing.JFrame {
         try {
             UsuarioDAO usuariodao = new UsuarioDAO();
             String emailSelected = String.valueOf(comboBoxUsers.getSelectedItem());
-            
+
             if (usuariodao.isExistsCPF(emailSelected, textCPF.getText())) {
                 Menu menu = new Menu();
                 menu.setVisible(true);

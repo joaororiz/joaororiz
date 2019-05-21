@@ -70,7 +70,7 @@ public class UsuarioDAO {
         rs.close();
         return listUsuarios;
     }
-    
+
     public List<UsuarioBEAN> findByAllPacientes() throws SQLException {
         String sql = "SELECT * FROM usuario WHERE usuario.tipoUser = 'Paciente' ORDER BY usuario.nome ASC";
         List<UsuarioBEAN> listPacientes = new ArrayList<>();
@@ -90,7 +90,7 @@ public class UsuarioDAO {
         rs.close();
         return listPacientes;
     }
-    
+
     public List<UsuarioBEAN> findByAllMedicos() throws SQLException {
         String sql = "SELECT * FROM usuario WHERE usuario.tipoUser = 'Médico' ORDER BY usuario.nome ASC";
         List<UsuarioBEAN> listMedicos = new ArrayList<>();
@@ -110,7 +110,6 @@ public class UsuarioDAO {
         rs.close();
         return listMedicos;
     }
-    
 
     public boolean isExistsCPF(String emailSelect, String cpfInfo) throws SQLException {
         String query = "SELECT * FROM usuario WHERE email = '" + emailSelect + "' AND cpf = '" + cpfInfo + "'";

@@ -2,9 +2,7 @@ package Dao;
 
 import Conexao.MySQLDAO;
 import Modelo.ConsultaBEAN;
-import Modelo.UsuarioBEAN;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,15 +13,14 @@ import java.util.List;
  *
  * @author João Otávio Mota Roriz
  */
-public class ConsultasDAO   {
-    
+public class ConsultasDAO {
+
     private Connection connection;
 
     public ConsultasDAO() {
         this.connection = new MySQLDAO().getConnection();
     }
-    
-				
+
     public void adicionaConsulta(ConsultaBEAN consulta) {
         String sql = "INSERT INTO consulta(idPaciente,idMedico,dataConsulta,descricao) VALUES(?,?,?,?)";
         try {
@@ -38,7 +35,7 @@ public class ConsultasDAO   {
             throw new RuntimeException(u);
         }
     }
-    
+
     public List<ConsultaBEAN> findByAllConsultas() throws SQLException {
         String sql = "SELECT * FROM consulta ORDER BY dataConsulta ASC";
         List<ConsultaBEAN> listConsultas = new ArrayList<>();
@@ -57,6 +54,4 @@ public class ConsultasDAO   {
         rs.close();
         return listConsultas;
     }
-    
-    
 }

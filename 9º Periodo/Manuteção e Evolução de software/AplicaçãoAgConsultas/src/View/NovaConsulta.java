@@ -291,19 +291,7 @@ public class NovaConsulta extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botaoNovoActionPerformed
 
-    public static void main(String args[]) {
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new NovaConsulta().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(NovaConsulta.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-    }
-
+ 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

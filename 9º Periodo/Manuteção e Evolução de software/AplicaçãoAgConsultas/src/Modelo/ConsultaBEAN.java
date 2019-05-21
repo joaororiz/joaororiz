@@ -1,8 +1,5 @@
 package Modelo;
 
-import java.util.Date;
-import javafx.scene.text.Text;
-
 /**
  *
  * @author João Otávio Mota Roriz

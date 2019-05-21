@@ -13,7 +13,6 @@ public class MySQLDAO {
 
     public static final String DRIVER = "com.mysql.jdbc.Driver";
     public static final String DBURL = "jdbc:mysql://localhost/consultasbd";
-//    public static final String DBURL = "jdbc:mysql://localhost:3306/db_gestao_financeira";;
     private static Connection con;
 
     // metodo para criar a conexao com MySQL
