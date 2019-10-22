@@ -22,6 +22,10 @@ public class Control_Faculdade {
         DAO_Faculdade.getInstanceFaculdade().deleteFaculdade(faculdade);
     }
 
+    public ArrayList<BEAN_Faculdade> listaFaculdades() {
+        return DAO_Faculdade.getInstanceFaculdade().findAllFaculdades();
+    }
+    
     public ArrayList<BEAN_Faculdade> listaFaculdadesAtivas() {
         return DAO_Faculdade.getInstanceFaculdade().findAllFaculdadesAtivas();
     }

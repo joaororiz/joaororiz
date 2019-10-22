@@ -68,15 +68,16 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
 
         for (int i = 0; i < listDisciplinas.size(); i++) {
             String nomefaculdade = null;
-            for (BEAN_Faculdade faculdade : listaDeFaculdades) {
+            List<BEAN_Faculdade> listaDeFaculdadesTotal = controleFaculdade.listaFaculdades();
+
+            for (BEAN_Faculdade faculdade : listaDeFaculdadesTotal) {
                 if (faculdade.getIdFaculdade() == listDisciplinas.get(i).getIdFaculdade()) {
                     nomefaculdade = faculdade.getNomeFaculdade();
                 }
             }
-            modelo.addRow(new Object[]{
-                listDisciplinas.get(i).getNomeDisciplina(),
+            modelo.addRow(new Object[]{listDisciplinas.get(i).getNomeDisciplina(),
                 listDisciplinas.get(i).getDescricaoDisciplina(),
-                (nomefaculdade != null ? nomefaculdade : "Inativo"),
+                nomefaculdade,
                 listDisciplinas.get(i).getStatusDisciplina().equals("1") ? "Ativo" : "Inativa"});
         }
 
@@ -390,13 +391,14 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
 
                                 controleDisciplina.updateDisciplina(disciplinaSelected);
                                 JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < alterada com sucesso! ");
+                                
+                                listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                                this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+                                this.textNome.setText("");
+                                this.textDescricao.setText("");
+                                this.comboBoxFaculdade.setSelectedIndex(0);
+                                this.botaoCancelarActionPerformed(evt);
                             }
-                            listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
-                            this.atualizaTabelaDisciplinas(listaDeDisciplinas);
-                            this.textNome.setText("");
-                            this.textDescricao.setText("");
-                            this.comboBoxFaculdade.setSelectedIndex(0);
-                            this.botaoCancelarActionPerformed(evt);
                         }
                     }
                 }
@@ -478,9 +480,15 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
     private void checkAtivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkAtivosMouseClicked
         try {
             if (checkAtivos.isSelected()) {
+                this.textNome.setText("");
+                this.textDescricao.setText("");
+                this.comboBoxFaculdade.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(true);
                 this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
             } else {
+                this.textNome.setText("");
+                this.textDescricao.setText("");
+                this.comboBoxFaculdade.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(false);
                 this.listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
             }

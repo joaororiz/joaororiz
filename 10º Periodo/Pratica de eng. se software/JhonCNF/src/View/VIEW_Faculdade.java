@@ -366,14 +366,15 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
 
                                 controleFaculdade.updateFaculdade(faculdadeSelected);
                                 JOptionPane.showMessageDialog(null, "Faculdade >  " + textNome.getText() + "  < alterada com sucesso! ");
+                                
+                                listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+                                this.atualizaTabelaFaculdades(listaDeFaculdades);
+                                this.textNome.setText("");
+                                this.textDescricao.setText("");
+                                this.comboBoxUF.setSelectedIndex(0);
+                                this.textCidade.setText("");
+                                this.botaoCancelarActionPerformed(evt);
                             }
-                            listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
-                            this.atualizaTabelaFaculdades(listaDeFaculdades);
-                            this.textNome.setText("");
-                            this.textDescricao.setText("");
-                            this.comboBoxUF.setSelectedIndex(0);
-                            this.textCidade.setText("");
-                            this.botaoCancelarActionPerformed(evt);
                         }
                     }
                 }
@@ -466,9 +467,17 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
     private void checkAtivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkAtivosMouseClicked
         try {
             if (checkAtivos.isSelected()) {
+                this.textNome.setText("");
+                this.textDescricao.setText("");
+                this.comboBoxUF.setSelectedIndex(0);
+                this.textCidade.setText("");
                 this.botaoExcluir.setEnabled(true);
                 listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
             } else {
+                this.textNome.setText("");
+                this.textDescricao.setText("");
+                this.comboBoxUF.setSelectedIndex(0);
+                this.textCidade.setText("");
                 this.botaoExcluir.setEnabled(false);
                 listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
             }

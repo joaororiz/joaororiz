@@ -441,9 +441,17 @@ public class VIEW_Professor extends javax.swing.JFrame {
     private void checkAtivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkAtivosMouseClicked
         try {
             if (checkAtivos.isSelected()) {
+                this.textNome.setText("");
+                this.textEmail.setText("");
+                this.textDataNasc.setText("");
+                this.textSenha.setText("");
                 this.botaoExcluir.setEnabled(true);
                 listaDeProfessores = controleProfessor.listaProfessoresAtivos();
             } else {
+                this.textNome.setText("");
+                this.textEmail.setText("");
+                this.textDataNasc.setText("");
+                this.textSenha.setText("");
                 this.botaoExcluir.setEnabled(false);
                 listaDeProfessores = controleProfessor.listaProfessoresInativos();
             }
@@ -505,14 +513,14 @@ public class VIEW_Professor extends javax.swing.JFrame {
 
                                     controleProfessor.updateProfessor(professorSelected);
                                     JOptionPane.showMessageDialog(null, "Professor (a) >  " + textNome.getText() + "  < alterado com sucesso! ");
+                                    listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+                                    this.atualizaTabelaProfessores(listaDeProfessores);
+                                    this.textNome.setText("");
+                                    this.textDataNasc.setText("");
+                                    this.textEmail.setText("");
+                                    this.textSenha.setText("");
+                                    this.botaoCancelarActionPerformed(evt);
                                 }
-                                listaDeProfessores = controleProfessor.listaProfessoresAtivos();
-                                this.atualizaTabelaProfessores(listaDeProfessores);
-                                this.textNome.setText("");
-                                this.textDataNasc.setText("");
-                                this.textEmail.setText("");
-                                this.textSenha.setText("");
-                                this.botaoCancelarActionPerformed(evt);
                             }
                         }
                     }

@@ -35,6 +35,10 @@ public class DAO_Faculdade {
         MySQLDAO.executeQuery("UPDATE faculdade SET statusFaculdade=0 WHERE idFaculdade=?", faculdade.getIdFaculdade());
     }
 
+    public ArrayList<BEAN_Faculdade> findAllFaculdades() {
+        return listaFaculdades("SELECT * FROM faculdade ORDER BY nomeFaculdade");
+    }
+    
     public ArrayList<BEAN_Faculdade> findAllFaculdadesAtivas() {
         return listaFaculdades("SELECT * FROM faculdade WHERE statusFaculdade = 1 ORDER BY nomeFaculdade");
     }
