@@ -469,6 +469,7 @@ public class VIEW_Professor extends javax.swing.JFrame {
                 listaDeProfessores = controleProfessor.listaProfessoresInativosByNome(textNome.getText());
             }
             this.atualizaTabelaProfessores(listaDeProfessores);
+            this.textNome.setText("");
         } catch (SQLException ex) {
             Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -480,52 +481,58 @@ public class VIEW_Professor extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Os campos não podem estar vázios");
         } else if (validarEmail(textEmail.getText().toString())) {
             if (ValidarSenhaForte(textSenha.getText())) {
-                try {
-                    Date dataNascimento = null;
-                    dataNascimento = convert_StringToDate(textDataNasc.getText());
-                    if (!boolClikedTabela) {
-                        BEAN_Professor professor = new BEAN_Professor(0, textNome.getText(), dataNascimento, textEmail.getText(), textSenha.getText(), "1");
-                        controleProfessor.addProfessor(professor);
+                if (ValidarData(textDataNasc.getText())) {
+                    try {
+                        Date dataNascimento = null;
+                        dataNascimento = convert_StringToDate(textDataNasc.getText());
+                        if (!boolClikedTabela) {
+                            BEAN_Professor professor = new BEAN_Professor(0, textNome.getText(), dataNascimento, textEmail.getText(), textSenha.getText(), "1");
+                            controleProfessor.addProfessor(professor);
 
-                        JOptionPane.showMessageDialog(null, "Professor >  " + textNome.getText() + "  < inserido com sucesso! ");
+                            JOptionPane.showMessageDialog(null, "Professor >  " + textNome.getText() + "  < inserido com sucesso! ");
 
-                        listaDeProfessores = controleProfessor.listaProfessoresAtivos();
-                        this.atualizaTabelaProfessores(listaDeProfessores);
-                        this.textNome.setText("");
-                        this.textDataNasc.setText("");
-                        this.textEmail.setText("");
-                        this.textSenha.setText("");
-                        this.botaoCancelarActionPerformed(evt);
-                    } else {
-                        if (tabelaProfessores.getSelectedRow() != -1) {
-                            int index = tabelaProfessores.getSelectedRow();
                             listaDeProfessores = controleProfessor.listaProfessoresAtivos();
-                            BEAN_Professor professorSelected = listaDeProfessores.get(index);
+                            this.atualizaTabelaProfessores(listaDeProfessores);
+                            this.textNome.setText("");
+                            this.textDataNasc.setText("");
+                            this.textEmail.setText("");
+                            this.textSenha.setText("");
+                            this.botaoCancelarActionPerformed(evt);
+                        } else {
+                            if (tabelaProfessores.getSelectedRow() != -1) {
+                                int index = tabelaProfessores.getSelectedRow();
+                                listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+                                BEAN_Professor professorSelected = listaDeProfessores.get(index);
 
-                            for (BEAN_Professor professores : listaDeProfessores) {
-                                if (professores.getIdProfessor() == professorSelected.getIdProfessor()) {
-                                    professorSelected.setIdProfessor(professorSelected.getIdProfessor());
-                                    professorSelected.setNomeProfessor(textNome.getText());
-                                    professorSelected.setDataNascimentoProfessor(dataNascimento);
-                                    professorSelected.setUsuarioProfessor(textEmail.getText());
-                                    professorSelected.setSenhaProfessor(textSenha.getText());
-                                    professorSelected.setStatusProfessor("1");
+                                for (BEAN_Professor professores : listaDeProfessores) {
+                                    if (professores.getIdProfessor() == professorSelected.getIdProfessor()) {
+                                        professorSelected.setIdProfessor(professorSelected.getIdProfessor());
+                                        professorSelected.setNomeProfessor(textNome.getText());
+                                        professorSelected.setDataNascimentoProfessor(dataNascimento);
+                                        professorSelected.setUsuarioProfessor(textEmail.getText());
+                                        professorSelected.setSenhaProfessor(textSenha.getText());
+                                        professorSelected.setStatusProfessor("1");
 
-                                    controleProfessor.updateProfessor(professorSelected);
-                                    JOptionPane.showMessageDialog(null, "Professor (a) >  " + textNome.getText() + "  < alterado com sucesso! ");
-                                    listaDeProfessores = controleProfessor.listaProfessoresAtivos();
-                                    this.atualizaTabelaProfessores(listaDeProfessores);
-                                    this.textNome.setText("");
-                                    this.textDataNasc.setText("");
-                                    this.textEmail.setText("");
-                                    this.textSenha.setText("");
-                                    this.botaoCancelarActionPerformed(evt);
+                                        controleProfessor.updateProfessor(professorSelected);
+                                        JOptionPane.showMessageDialog(null, "Professor (a) >  " + textNome.getText() + "  < alterado com sucesso! ");
+                                        listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+                                        this.atualizaTabelaProfessores(listaDeProfessores);
+                                        this.textNome.setText("");
+                                        this.textDataNasc.setText("");
+                                        this.textEmail.setText("");
+                                        this.textSenha.setText("");
+                                        this.botaoCancelarActionPerformed(evt);
+                                    }
                                 }
                             }
                         }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(VIEW_Professor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (SQLException ex) {
-                    Logger.getLogger(VIEW_Professor.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Data de nascimento inválida!");
+                    textDataNasc.setText("");
+                    textDataNasc.requestFocus();
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Senha deve conter letras maiúsculas, minúscula e número!");
@@ -543,14 +550,18 @@ public class VIEW_Professor extends javax.swing.JFrame {
         int index = tabelaProfessores.getSelectedRow();
 
         if (index >= 0 && index < listaDeProfessores.size()) {
-            BEAN_Professor professorSelecionado = listaDeProfessores.get(tabelaProfessores.getSelectedRow());
             try {
-                controleProfessor.deleteProfessor(professorSelecionado);
-                JOptionPane.showMessageDialog(null, "Professor >  " + textNome.getText() + "  < excluído com sucesso! ");
+                int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir: " + textNome.getText() + "?", "Excluir", JOptionPane.YES_OPTION);
 
-                this.listaDeProfessores = controleProfessor.listaProfessoresAtivos();
-                this.atualizaTabelaProfessores(listaDeProfessores);
-                this.botaoCancelarActionPerformed(evt);
+                if (resposta == JOptionPane.YES_OPTION) {
+                    BEAN_Professor professorSelecionado = listaDeProfessores.get(tabelaProfessores.getSelectedRow());
+                    controleProfessor.deleteProfessor(professorSelecionado);
+                    JOptionPane.showMessageDialog(null, "Professor >  " + textNome.getText() + "  < excluído com sucesso! ");
+
+                    this.listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+                    this.atualizaTabelaProfessores(listaDeProfessores);
+                    this.botaoCancelarActionPerformed(evt);
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
             }

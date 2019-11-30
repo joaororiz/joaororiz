@@ -391,7 +391,7 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
 
                                 controleDisciplina.updateDisciplina(disciplinaSelected);
                                 JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < alterada com sucesso! ");
-                                
+
                                 listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
                                 this.atualizaTabelaDisciplinas(listaDeDisciplinas);
                                 this.textNome.setText("");
@@ -432,14 +432,18 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
         int index = tabelaDisciplinas.getSelectedRow();
 
         if (index >= 0 && index < listaDeDisciplinas.size()) {
-            BEAN_Disciplina disciplinaSelecionada = listaDeDisciplinas.get(tabelaDisciplinas.getSelectedRow());
             try {
-                controleDisciplina.deleteDisciplina(disciplinaSelecionada);
-                JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < excluída com sucesso! ");
+                int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir: " + textNome.getText() + "?", "Excluir", JOptionPane.YES_OPTION);
 
-                this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
-                this.atualizaTabelaDisciplinas(listaDeDisciplinas);
-                this.botaoCancelarActionPerformed(evt);
+                if (resposta == JOptionPane.YES_OPTION) {
+                    BEAN_Disciplina disciplinaSelecionada = listaDeDisciplinas.get(tabelaDisciplinas.getSelectedRow());
+                    controleDisciplina.deleteDisciplina(disciplinaSelecionada);
+                    JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < excluída com sucesso! ");
+
+                    this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                    this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+                    this.botaoCancelarActionPerformed(evt);
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(VIEW_Disciplina.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -506,6 +510,7 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
                 listaDeDisciplinas = controleDisciplina.listaDisciplinasInativasByNome(textNome.getText());
             }
             this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+            this.textNome.setText("");
         } catch (SQLException ex) {
             Logger.getLogger(VIEW_Disciplina.class.getName()).log(Level.SEVERE, null, ex);
         }

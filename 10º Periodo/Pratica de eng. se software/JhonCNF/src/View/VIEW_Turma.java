@@ -1,6 +1,8 @@
 package View;
 
+import Controller.Control_Disciplina;
 import Controller.Control_Faculdade;
+import Model.BEANS.BEAN_Disciplina;
 import Model.BEANS.BEAN_Faculdade;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,21 +17,24 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author João Otávio Mota Roriz
  */
-public class VIEW_Faculdade extends javax.swing.JFrame {
+public class VIEW_Turma extends javax.swing.JFrame {
 
     List<BEAN_Faculdade> listaDeFaculdades;
     Control_Faculdade controleFaculdade = new Control_Faculdade();
+
+    List<BEAN_Disciplina> listaDeDisciplinas;
+    Control_Disciplina controleDisciplina = new Control_Disciplina();
     private boolean boolClikedTabela = true;
 
-    public VIEW_Faculdade() throws SQLException {
+    public VIEW_Turma() throws SQLException {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setTitle("Tela faculdade");
+        this.setTitle("Tela disciplina");
 
         this.textNome.requestFocus();
+
         this.textDescricao.setEnabled(false);
-        this.comboBoxUF.setEnabled(false);
-        this.textCidade.setEnabled(false);
+        this.comboBoxFaculdade.setEnabled(false);
 
         this.botaoSalvar.setEnabled(false);
         this.botaoCancelar.setEnabled(false);
@@ -37,33 +42,55 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
         this.checkAtivos.setSelected(true);
 
         if (checkAtivos.isSelected()) {
-            listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+            listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
         } else {
-            listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
+            listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
         }
 
-        this.atualizaTabelaFaculdades(listaDeFaculdades);
+        listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+
+        this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+        this.atualizaComboBoxfaculdades(listaDeFaculdades);
     }
 
-    public void atualizaTabelaFaculdades(List<BEAN_Faculdade> listFaculdades) throws SQLException {
+    public void atualizaComboBoxfaculdades(List<BEAN_Faculdade> listFaculdades) {
 
-        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Nome", "UF", "Cidade", "Descrição", "Status"}, 0);
+        int cont = 0;
+        while (cont < listaDeFaculdades.size()) {
+            comboBoxFaculdade.addItem(listaDeFaculdades.get(cont).getNomeFaculdade());
+            cont++;
+        }
+    }
 
-        for (int i = 0; i < listFaculdades.size(); i++) {
-            modelo.addRow(new Object[]{listFaculdades.get(i).getNomeFaculdade(), listFaculdades.get(i).getUFfaculdade(), listFaculdades.get(i).getCidadeFaculdade(), listFaculdades.get(i).getDescricaoFaculdade(), listFaculdades.get(i).getStatusFaculdade().equals("1") ? "Ativo" : "Inativo"});
+    public void atualizaTabelaDisciplinas(List<BEAN_Disciplina> listDisciplinas) throws SQLException {
+
+        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Nome", "Descrição", "Faculdade", "Status"}, 0);
+
+        for (int i = 0; i < listDisciplinas.size(); i++) {
+            String nomefaculdade = null;
+            List<BEAN_Faculdade> listaDeFaculdadesTotal = controleFaculdade.listaFaculdades();
+
+            for (BEAN_Faculdade faculdade : listaDeFaculdadesTotal) {
+                if (faculdade.getIdFaculdade() == listDisciplinas.get(i).getIdFaculdade()) {
+                    nomefaculdade = faculdade.getNomeFaculdade();
+                }
+            }
+            modelo.addRow(new Object[]{listDisciplinas.get(i).getNomeDisciplina(),
+                listDisciplinas.get(i).getDescricaoDisciplina(),
+                nomefaculdade,
+                listDisciplinas.get(i).getStatusDisciplina().equals("1") ? "Ativo" : "Inativa"});
         }
 
-        tabelaFaculdades.setModel(modelo);
-        tabelaFaculdades.getColumnModel().getColumn(0).setWidth(100);
-        tabelaFaculdades.getColumnModel().getColumn(1).setWidth(5);
-        tabelaFaculdades.getColumnModel().getColumn(2).setWidth(15);
-        tabelaFaculdades.getColumnModel().getColumn(3).setWidth(25);
-        tabelaFaculdades.getColumnModel().getColumn(4).setWidth(5);
+        tabelaDisciplinas.setModel(modelo);
+        tabelaDisciplinas.getColumnModel().getColumn(0).setWidth(100);
+        tabelaDisciplinas.getColumnModel().getColumn(1).setWidth(20);
+        tabelaDisciplinas.getColumnModel().getColumn(2).setWidth(10);
+        tabelaDisciplinas.getColumnModel().getColumn(3).setWidth(10);
 
         DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
         centralizado.setHorizontalAlignment(SwingConstants.CENTER);
-        tabelaFaculdades.getColumnModel().getColumn(1).setCellRenderer(centralizado);
-        tabelaFaculdades.getColumnModel().getColumn(4).setCellRenderer(centralizado);
+        tabelaDisciplinas.getColumnModel().getColumn(2).setCellRenderer(centralizado);
+        tabelaDisciplinas.getColumnModel().getColumn(3).setCellRenderer(centralizado);
     }
 
     @SuppressWarnings("unchecked")
@@ -77,14 +104,12 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         textDescricao = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        textCidade = new javax.swing.JTextField();
         checkAtivos = new javax.swing.JCheckBox();
         botaoPesquisa = new javax.swing.JLabel();
-        comboBoxUF = new javax.swing.JComboBox<>();
+        comboBoxFaculdade = new javax.swing.JComboBox<>();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabelaFaculdades = new javax.swing.JTable();
+        tabelaDisciplinas = new javax.swing.JTable();
         botaoNovo = new javax.swing.JButton();
         botaoSalvar = new javax.swing.JButton();
         botaoExcluir = new javax.swing.JButton();
@@ -93,15 +118,13 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cadastro de Faculdade"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cadastro de Disciplinas"));
 
         jLabel1.setText("Nome");
 
         jLabel2.setText("Descrição");
 
-        jLabel3.setText("UF");
-
-        jLabel4.setText("Cidade");
+        jLabel3.setText("Faculdade");
 
         checkAtivos.setText("Ativos");
         checkAtivos.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -116,8 +139,6 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                 botaoPesquisaMouseClicked(evt);
             }
         });
-
-        comboBoxUF.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -135,15 +156,11 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                             .addComponent(textNome, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botaoPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 35, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(comboBoxUF, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(textCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
+                            .addComponent(jLabel3)
+                            .addComponent(comboBoxFaculdade, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -164,34 +181,32 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(textDescricao)
-                    .addComponent(textCidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboBoxUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboBoxFaculdade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        tabelaFaculdades.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaDisciplinas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Nome", "UF", "Cidade", "Descrição", "Status"
+                "Nome", "Descrição", "Faculdade", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -202,19 +217,18 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tabelaFaculdades.getTableHeader().setReorderingAllowed(false);
-        tabelaFaculdades.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabelaDisciplinas.getTableHeader().setReorderingAllowed(false);
+        tabelaDisciplinas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelaFaculdadesMouseClicked(evt);
+                tabelaDisciplinasMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tabelaFaculdades);
-        if (tabelaFaculdades.getColumnModel().getColumnCount() > 0) {
-            tabelaFaculdades.getColumnModel().getColumn(0).setPreferredWidth(70);
-            tabelaFaculdades.getColumnModel().getColumn(1).setPreferredWidth(3);
-            tabelaFaculdades.getColumnModel().getColumn(2).setPreferredWidth(15);
-            tabelaFaculdades.getColumnModel().getColumn(3).setPreferredWidth(25);
-            tabelaFaculdades.getColumnModel().getColumn(4).setPreferredWidth(3);
+        jScrollPane1.setViewportView(tabelaDisciplinas);
+        if (tabelaDisciplinas.getColumnModel().getColumnCount() > 0) {
+            tabelaDisciplinas.getColumnModel().getColumn(0).setPreferredWidth(70);
+            tabelaDisciplinas.getColumnModel().getColumn(1).setPreferredWidth(25);
+            tabelaDisciplinas.getColumnModel().getColumn(2).setPreferredWidth(3);
+            tabelaDisciplinas.getColumnModel().getColumn(3).setPreferredWidth(3);
         }
 
         botaoNovo.setText("Novo");
@@ -315,12 +329,10 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
     private void botaoCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCancelarActionPerformed
         this.textNome.setText("");
         this.textDescricao.setText("");
-        this.comboBoxUF.setSelectedIndex(0);
-        this.textCidade.setText("");
+        this.comboBoxFaculdade.setSelectedIndex(0);
 
         this.textDescricao.setEnabled(false);
-        this.comboBoxUF.setEnabled(false);
-        this.textCidade.setEnabled(false);
+        this.comboBoxFaculdade.setEnabled(false);
 
         this.botaoNovo.setEnabled(true);
         this.botaoExcluir.setEnabled(true);
@@ -330,56 +342,68 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
 
     private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
 
-        if (textNome.getText().isEmpty() || textDescricao.getText().isEmpty() || textCidade.getText().isEmpty()) {
+        if (textNome.getText().isEmpty() || textDescricao.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Os campos não podem ficar vazios!", "Erro, verifique a mensagem abaixo", 0);
-        } else if (comboBoxUF.getSelectedIndex() == 0) {
-            JOptionPane.showMessageDialog(null, "Selecione um estado!", "Erro, verifique a mensagem abaixo", 0);
+        } else if (comboBoxFaculdade.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Selecione uma faculdade!", "Erro, verifique a mensagem abaixo", 0);
         } else {
             try {
                 if (!boolClikedTabela) {
-                    BEAN_Faculdade faculdade = new BEAN_Faculdade(0, textNome.getText(), textDescricao.getText(), comboBoxUF.getSelectedItem().toString(), textCidade.getText(), "1");
-                    controleFaculdade.addFaculdade(faculdade);
+                    int idFaculdade = 0;
 
-                    JOptionPane.showMessageDialog(null, "Faculdade >  " + textNome.getText() + "  < inserida com sucesso! ");
+                    for (BEAN_Faculdade faculdades : listaDeFaculdades) {
+                        if (faculdades.getNomeFaculdade().equals(comboBoxFaculdade.getSelectedItem().toString())) {
+                            idFaculdade = faculdades.getIdFaculdade();
+                        }
+                    }
 
-                    listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
-                    this.atualizaTabelaFaculdades(listaDeFaculdades);
+                    BEAN_Disciplina disciplina = new BEAN_Disciplina(0, textNome.getText(), textDescricao.getText(), idFaculdade, "1");
+                    controleDisciplina.addDisciplina(disciplina);
+
+                    JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < inserida com sucesso! ");
+
+                    listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                    this.atualizaTabelaDisciplinas(listaDeDisciplinas);
                     this.textNome.setText("");
                     this.textDescricao.setText("");
-                    this.comboBoxUF.setSelectedIndex(0);
-                    this.textCidade.setText("");
+                    this.comboBoxFaculdade.setSelectedIndex(0);
                     this.botaoCancelarActionPerformed(evt);
                 } else {
-                    if (tabelaFaculdades.getSelectedRow() != -1) {
-                        int index = tabelaFaculdades.getSelectedRow();
-                        this.listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
-                        BEAN_Faculdade faculdadeSelected = listaDeFaculdades.get(index);
+                    if (tabelaDisciplinas.getSelectedRow() != -1) {
+                        int index = tabelaDisciplinas.getSelectedRow();
+                        this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                        BEAN_Disciplina disciplinaSelected = listaDeDisciplinas.get(index);
 
-                        for (BEAN_Faculdade faculdades : listaDeFaculdades) {
-                            if (faculdades.getIdFaculdade() == faculdadeSelected.getIdFaculdade()) {
-                                faculdadeSelected.setIdFaculdade(faculdadeSelected.getIdFaculdade());
-                                faculdadeSelected.setNomeFaculdade(textNome.getText());
-                                faculdadeSelected.setDescricaoFaculdade(textDescricao.getText());
-                                faculdadeSelected.setUFfaculdade(comboBoxUF.getSelectedItem().toString());
-                                faculdadeSelected.setCidadeFaculdade(textCidade.getText());
-                                faculdadeSelected.setStatusFaculdade("1");
+                        for (BEAN_Disciplina disciplinas : listaDeDisciplinas) {
+                            if (disciplinas.getIdDisciplina() == disciplinaSelected.getIdDisciplina()) {
+                                int idFaculdade = 0;
 
-                                controleFaculdade.updateFaculdade(faculdadeSelected);
-                                JOptionPane.showMessageDialog(null, "Faculdade >  " + textNome.getText() + "  < alterada com sucesso! ");
+                                for (BEAN_Faculdade faculdades : listaDeFaculdades) {
+                                    if (faculdades.getNomeFaculdade().equals(comboBoxFaculdade.getSelectedItem().toString())) {
+                                        idFaculdade = faculdades.getIdFaculdade();
+                                    }
+                                }
+                                disciplinaSelected.setIdDisciplina(disciplinas.getIdDisciplina());
+                                disciplinaSelected.setNomeDisciplina(textNome.getText());
+                                disciplinaSelected.setDescricaoDisciplina(textDescricao.getText());
+                                disciplinaSelected.setIdFaculdade(idFaculdade);
+                                disciplinaSelected.setStatusDisciplina("1");
 
-                                listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
-                                this.atualizaTabelaFaculdades(listaDeFaculdades);
+                                controleDisciplina.updateDisciplina(disciplinaSelected);
+                                JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < alterada com sucesso! ");
+
+                                listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                                this.atualizaTabelaDisciplinas(listaDeDisciplinas);
                                 this.textNome.setText("");
                                 this.textDescricao.setText("");
-                                this.comboBoxUF.setSelectedIndex(0);
-                                this.textCidade.setText("");
+                                this.comboBoxFaculdade.setSelectedIndex(0);
                                 this.botaoCancelarActionPerformed(evt);
                             }
                         }
                     }
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_botaoSalvarActionPerformed
@@ -388,13 +412,10 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
 
         this.textNome.setEnabled(true);
         this.textDescricao.setEnabled(true);
-        this.comboBoxUF.setEnabled(true);
-        this.textCidade.setEnabled(true);
+        this.comboBoxFaculdade.setEnabled(true);
 
         this.textNome.setText("");
         this.textDescricao.setText("");
-        this.comboBoxUF.setSelectedIndex(0);
-        this.textCidade.setText("");
 
         this.botaoSalvar.setEnabled(true);
         this.botaoCancelar.setEnabled(true);
@@ -408,100 +429,90 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoNovoActionPerformed
 
     private void botaoExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoExcluirActionPerformed
-        int index = tabelaFaculdades.getSelectedRow();
+        int index = tabelaDisciplinas.getSelectedRow();
 
-        if (index >= 0 && index < listaDeFaculdades.size()) {
+        if (index >= 0 && index < listaDeDisciplinas.size()) {
             try {
                 int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir: " + textNome.getText() + "?", "Excluir", JOptionPane.YES_OPTION);
 
                 if (resposta == JOptionPane.YES_OPTION) {
-                    BEAN_Faculdade faculdadeSelecionada = listaDeFaculdades.get(index);
-                    controleFaculdade.deleteFaculdade(faculdadeSelecionada);
-                    JOptionPane.showMessageDialog(null, "Faculdade >  " + textNome.getText() + "  < excluída com sucesso! ");
+                    BEAN_Disciplina disciplinaSelecionada = listaDeDisciplinas.get(tabelaDisciplinas.getSelectedRow());
+                    controleDisciplina.deleteDisciplina(disciplinaSelecionada);
+                    JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < excluída com sucesso! ");
 
-                    listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
-                    this.atualizaTabelaFaculdades(listaDeFaculdades);
+                    this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                    this.atualizaTabelaDisciplinas(listaDeDisciplinas);
                     this.botaoCancelarActionPerformed(evt);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir.");
         }
     }//GEN-LAST:event_botaoExcluirActionPerformed
 
-    private void tabelaFaculdadesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaFaculdadesMouseClicked
+    private void tabelaDisciplinasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaDisciplinasMouseClicked
 
-        this.textCidade.setEnabled(true);
         this.textNome.setEnabled(true);
         this.textDescricao.setEnabled(true);
-        this.comboBoxUF.setEnabled(true);
+        this.comboBoxFaculdade.setEnabled(true);
 
         this.botaoSalvar.setEnabled(true);
         this.botaoCancelar.setEnabled(true);
         this.botaoNovo.setEnabled(false);
 
-        boolClikedTabela = true;
+        this.boolClikedTabela = true;
 
         if (checkAtivos.isSelected()) {
-            listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+            listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
         } else {
-            listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
+            listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
         }
 
-        int index = tabelaFaculdades.getSelectedRow();
+        int index = tabelaDisciplinas.getSelectedRow();
 
-        if (index >= 0 && tabelaFaculdades.getSelectedRow() < listaDeFaculdades.size()) {
-            BEAN_Faculdade faculdade = listaDeFaculdades.get(index);
+        if (index >= 0 && tabelaDisciplinas.getSelectedRow() < listaDeDisciplinas.size()) {
+            BEAN_Disciplina disciplina = listaDeDisciplinas.get(index);
 
-            textNome.setText(faculdade.getNomeFaculdade());
-            textDescricao.setText(faculdade.getDescricaoFaculdade());
-            comboBoxUF.setName(faculdade.getUFfaculdade());
-            textCidade.setText(faculdade.getCidadeFaculdade());
-
-            for (int i = 0; i < comboBoxUF.getItemCount(); i++) {
-                if (faculdade.getUFfaculdade().equals(comboBoxUF.getItemAt(i))) {
-                    comboBoxUF.setSelectedIndex(i);
-                }
-            }
+            this.textNome.setText(disciplina.getNomeDisciplina());
+            this.textDescricao.setText(disciplina.getDescricaoDisciplina());
+            this.comboBoxFaculdade.setSelectedIndex(0);
         }
-    }//GEN-LAST:event_tabelaFaculdadesMouseClicked
+    }//GEN-LAST:event_tabelaDisciplinasMouseClicked
 
     private void checkAtivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkAtivosMouseClicked
         try {
             if (checkAtivos.isSelected()) {
                 this.textNome.setText("");
                 this.textDescricao.setText("");
-                this.comboBoxUF.setSelectedIndex(0);
-                this.textCidade.setText("");
+                this.comboBoxFaculdade.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(true);
-                listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+                this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
             } else {
                 this.textNome.setText("");
                 this.textDescricao.setText("");
-                this.comboBoxUF.setSelectedIndex(0);
-                this.textCidade.setText("");
+                this.comboBoxFaculdade.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(false);
-                listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
+                this.listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
             }
-            this.atualizaTabelaFaculdades(listaDeFaculdades);
+            this.atualizaTabelaDisciplinas(listaDeDisciplinas);
         } catch (SQLException ex) {
-            Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_checkAtivosMouseClicked
 
     private void botaoPesquisaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botaoPesquisaMouseClicked
         try {
             if (checkAtivos.isSelected()) {
-                listaDeFaculdades = controleFaculdade.listaFaculdadesAtivasByNome(textNome.getText());
+                listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivasByNome(textNome.getText());
             } else {
-                listaDeFaculdades = controleFaculdade.listaFaculdadesInativasByNome(textNome.getText());
+                listaDeDisciplinas = controleDisciplina.listaDisciplinasInativasByNome(textNome.getText());
             }
-            this.atualizaTabelaFaculdades(listaDeFaculdades);
+            this.atualizaTabelaDisciplinas(listaDeDisciplinas);
             this.textNome.setText("");
         } catch (SQLException ex) {
-            Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_botaoPesquisaMouseClicked
 
@@ -518,17 +529,15 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
     private javax.swing.JButton botaoSalvar;
     private javax.swing.JButton botaoVoltar;
     private javax.swing.JCheckBox checkAtivos;
-    private javax.swing.JComboBox<String> comboBoxUF;
+    private javax.swing.JComboBox<String> comboBoxFaculdade;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable tabelaFaculdades;
-    private javax.swing.JTextField textCidade;
+    private javax.swing.JTable tabelaDisciplinas;
     private javax.swing.JTextField textDescricao;
     private javax.swing.JTextField textNome;
     // End of variables declaration//GEN-END:variables
