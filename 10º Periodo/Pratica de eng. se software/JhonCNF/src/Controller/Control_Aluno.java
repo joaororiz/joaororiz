@@ -21,6 +21,10 @@ public class Control_Aluno {
     public void deleteAluno(BEAN_Aluno aluno) throws SQLException {
         DAO_Aluno.getInstanceAluno().deleteAluno(aluno);
     }
+    
+    public void ativaAluno(BEAN_Aluno aluno) throws SQLException {
+        DAO_Aluno.getInstanceAluno().ativaAluno(aluno);
+    }
 
     public ArrayList<BEAN_Aluno> listaAlunoesAtivos() {
         return DAO_Aluno.getInstanceAluno().findAllAlunosAtivos();

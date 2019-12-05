@@ -21,6 +21,10 @@ public class Control_Disciplina {
     public void deleteDisciplina(BEAN_Disciplina disciplina) throws SQLException {
         DAO_Disciplina.getInstanceDisciplina().deleteDisciplina(disciplina);
     }
+    
+    public void ativaDisciplina(BEAN_Disciplina disciplina) throws SQLException {
+        DAO_Disciplina.getInstanceDisciplina().ativaDisciplina(disciplina);
+    }
 
     public ArrayList<BEAN_Disciplina> listaDisciplinasAtivas() {
         return DAO_Disciplina.getInstanceDisciplina().findAllDisciplinasAtivas();

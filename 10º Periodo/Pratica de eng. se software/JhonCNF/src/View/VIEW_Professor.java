@@ -47,7 +47,11 @@ public class VIEW_Professor extends javax.swing.JFrame {
 
         if (checkAtivos.isSelected()) {
             listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             listaDeProfessores = controleProfessor.listaProfessoresInativos();
         }
 
@@ -150,6 +154,7 @@ public class VIEW_Professor extends javax.swing.JFrame {
         botaoCancelar = new javax.swing.JButton();
         botaoSalvar = new javax.swing.JButton();
         botaoExcluir = new javax.swing.JButton();
+        botaoAtivar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -216,7 +221,7 @@ public class VIEW_Professor extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(textEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(textSenha)
@@ -338,6 +343,13 @@ public class VIEW_Professor extends javax.swing.JFrame {
             }
         });
 
+        botaoAtivar.setText("Ativa");
+        botaoAtivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoAtivarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -357,6 +369,8 @@ public class VIEW_Professor extends javax.swing.JFrame {
                                 .addGap(53, 53, 53)
                                 .addComponent(botaoSalvar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(botaoAtivar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botaoExcluir)
                                 .addGap(29, 29, 29)
                                 .addComponent(botaoCancelar)))))
@@ -383,7 +397,8 @@ public class VIEW_Professor extends javax.swing.JFrame {
                     .addComponent(botaoNovo)
                     .addComponent(botaoCancelar)
                     .addComponent(botaoSalvar)
-                    .addComponent(botaoExcluir))
+                    .addComponent(botaoExcluir)
+                    .addComponent(botaoAtivar))
                 .addContainerGap())
         );
 
@@ -446,6 +461,8 @@ public class VIEW_Professor extends javax.swing.JFrame {
                 this.textDataNasc.setText("");
                 this.textSenha.setText("");
                 this.botaoExcluir.setEnabled(true);
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
                 listaDeProfessores = controleProfessor.listaProfessoresAtivos();
             } else {
                 this.textNome.setText("");
@@ -453,6 +470,8 @@ public class VIEW_Professor extends javax.swing.JFrame {
                 this.textDataNasc.setText("");
                 this.textSenha.setText("");
                 this.botaoExcluir.setEnabled(false);
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 listaDeProfessores = controleProfessor.listaProfessoresInativos();
             }
             this.atualizaTabelaProfessores(listaDeProfessores);
@@ -465,7 +484,11 @@ public class VIEW_Professor extends javax.swing.JFrame {
         try {
             if (checkAtivos.isSelected()) {
                 listaDeProfessores = controleProfessor.listaProfessoresAtivosByNome(textNome.getText());
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
             } else {
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 listaDeProfessores = controleProfessor.listaProfessoresInativosByNome(textNome.getText());
             }
             this.atualizaTabelaProfessores(listaDeProfessores);
@@ -584,10 +607,12 @@ public class VIEW_Professor extends javax.swing.JFrame {
         boolClikedTabela = true;
 
         if (checkAtivos.isSelected()) {
-            this.botaoExcluir.setEnabled(true);
             this.listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
-            this.botaoExcluir.setEnabled(false);
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             this.listaDeProfessores = controleProfessor.listaProfessoresInativos();
         }
 
@@ -603,7 +628,32 @@ public class VIEW_Professor extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tabelaProfessoresMouseClicked
 
+    private void botaoAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtivarActionPerformed
+        int index = tabelaProfessores.getSelectedRow();
+
+        if (index >= 0 && index < listaDeProfessores.size()) {
+            try {
+                int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente ativar: " + textNome.getText() + "?", "Ativar", JOptionPane.YES_OPTION);
+
+                if (resposta == JOptionPane.YES_OPTION) {
+                    BEAN_Professor professorSelecionado = listaDeProfessores.get(tabelaProfessores.getSelectedRow());
+                    controleProfessor.ativaProfessor(professorSelecionado);
+                    JOptionPane.showMessageDialog(null, "Professor >  " + textNome.getText() + "  < ativado com sucesso! ");
+
+                    this.listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+                    this.atualizaTabelaProfessores(listaDeProfessores);
+                    this.botaoCancelarActionPerformed(evt);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir.");
+        }
+    }//GEN-LAST:event_botaoAtivarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoAtivar;
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoExcluir;
     private javax.swing.JButton botaoNovo;

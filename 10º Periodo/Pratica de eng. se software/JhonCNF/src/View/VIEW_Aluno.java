@@ -44,7 +44,11 @@ public class VIEW_Aluno extends javax.swing.JFrame {
 
         if (checkAtivos.isSelected()) {
             listaDeAlunos = controleAluno.listaAlunoesAtivos();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             listaDeAlunos = controleAluno.listaAlunoesInativos();
         }
 
@@ -115,6 +119,7 @@ public class VIEW_Aluno extends javax.swing.JFrame {
         botaoCancelar = new javax.swing.JButton();
         botaoSalvar = new javax.swing.JButton();
         botaoExcluir = new javax.swing.JButton();
+        botaoAtivar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -279,6 +284,13 @@ public class VIEW_Aluno extends javax.swing.JFrame {
             }
         });
 
+        botaoAtivar.setText("Ativar");
+        botaoAtivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoAtivarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -300,9 +312,11 @@ public class VIEW_Aluno extends javax.swing.JFrame {
                                 .addComponent(botaoNovo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(botaoSalvar)
-                                .addGap(33, 33, 33)
+                                .addGap(18, 18, 18)
+                                .addComponent(botaoAtivar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botaoExcluir)
-                                .addGap(29, 29, 29)
+                                .addGap(17, 17, 17)
                                 .addComponent(botaoCancelar))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
@@ -324,7 +338,8 @@ public class VIEW_Aluno extends javax.swing.JFrame {
                     .addComponent(botaoNovo)
                     .addComponent(botaoCancelar)
                     .addComponent(botaoSalvar)
-                    .addComponent(botaoExcluir))
+                    .addComponent(botaoExcluir)
+                    .addComponent(botaoAtivar))
                 .addContainerGap())
         );
 
@@ -382,12 +397,16 @@ public class VIEW_Aluno extends javax.swing.JFrame {
                 this.textCPF.setText("");
                 this.textDataNasc.setText("");
                 this.botaoExcluir.setEnabled(true);
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
                 listaDeAlunos = controleAluno.listaAlunoesAtivos();
             } else {
                 this.textNome.setText("");
                 this.textCPF.setText("");
                 this.textDataNasc.setText("");
                 this.botaoExcluir.setEnabled(false);
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 listaDeAlunos = controleAluno.listaAlunoesInativos();
             }
             this.atualizaTabelaAlunoes(listaDeAlunos);
@@ -505,10 +524,12 @@ public class VIEW_Aluno extends javax.swing.JFrame {
         boolClikedTabela = true;
 
         if (checkAtivos.isSelected()) {
-            this.botaoExcluir.setEnabled(true);
             this.listaDeAlunos = controleAluno.listaAlunoesAtivos();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
-            this.botaoExcluir.setEnabled(false);
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             this.listaDeAlunos = controleAluno.listaAlunoesInativos();
         }
 
@@ -523,7 +544,32 @@ public class VIEW_Aluno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tabelaAlunosMouseClicked
 
+    private void botaoAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtivarActionPerformed
+        int index = tabelaAlunos.getSelectedRow();
+
+        if (index >= 0 && index < listaDeAlunos.size()) {
+            try {
+                int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente ativar: " + textNome.getText() + "?", "Ativar", JOptionPane.YES_OPTION);
+
+                if (resposta == JOptionPane.YES_OPTION) {
+                    BEAN_Aluno alunoSelecionado = listaDeAlunos.get(tabelaAlunos.getSelectedRow());
+                    controleAluno.ativaAluno(alunoSelecionado);
+                    JOptionPane.showMessageDialog(null, "Aluno >  " + textNome.getText() + "  < ativado com sucesso! ");
+
+                    this.listaDeAlunos = controleAluno.listaAlunoesAtivos();
+                    this.atualizaTabelaAlunoes(listaDeAlunos);
+                    this.botaoCancelarActionPerformed(evt);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir.");
+        }
+    }//GEN-LAST:event_botaoAtivarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoAtivar;
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoExcluir;
     private javax.swing.JButton botaoNovo;

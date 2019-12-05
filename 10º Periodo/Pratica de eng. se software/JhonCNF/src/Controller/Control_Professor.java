@@ -21,6 +21,10 @@ public class Control_Professor {
     public void deleteProfessor(BEAN_Professor professor) throws SQLException {
         DAO_Professor.getInstanceProfessor().deleteProfessor(professor);
     }
+    
+    public void ativaProfessor(BEAN_Professor professor) throws SQLException {
+        DAO_Professor.getInstanceProfessor().ativaProfessor(professor);
+    }
 
     public Boolean isExistProfessor(String usuario, String senha) {
         return DAO_Professor.getInstanceProfessor().isExistUser(usuario, senha);

@@ -34,6 +34,9 @@ public class DAO_Aluno {
     public void deleteAluno(BEAN_Aluno aluno) throws SQLException {
         MySQLDAO.executeQuery("UPDATE aluno SET statusAluno=0 WHERE idAluno = ?", aluno.getIdAluno());
     }
+    public void ativaAluno(BEAN_Aluno aluno) throws SQLException {
+        MySQLDAO.executeQuery("UPDATE aluno SET statusAluno=1 WHERE idAluno = ?", aluno.getIdAluno());
+    }
 
     public ArrayList<BEAN_Aluno> findAllAlunosAtivos() {
         return listaAlunoes("SELECT * FROM aluno WHERE statusAluno=1 ORDER BY nomeAluno");

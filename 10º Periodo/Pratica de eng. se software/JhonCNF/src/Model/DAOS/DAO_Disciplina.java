@@ -34,6 +34,10 @@ public class DAO_Disciplina {
     public void deleteDisciplina(BEAN_Disciplina disciplina) throws SQLException {
         MySQLDAO.executeQuery("UPDATE disciplina  SET statusDisciplina=0 WHERE idDisciplina = ?", disciplina.getIdDisciplina());
     }
+    
+    public void ativaDisciplina(BEAN_Disciplina disciplina) throws SQLException {
+        MySQLDAO.executeQuery("UPDATE disciplina  SET statusDisciplina=1 WHERE idDisciplina = ?", disciplina.getIdDisciplina());
+    }
 
     public ArrayList<BEAN_Disciplina> findAllDisciplinasAtivas() {
         return listaDisciplinas("SELECT * FROM disciplina WHERE statusDisciplina = 1 ORDER BY nomeDisciplina");

@@ -38,7 +38,11 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
 
         if (checkAtivos.isSelected()) {
             listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
         }
 
@@ -90,6 +94,7 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
         botaoExcluir = new javax.swing.JButton();
         botaoCancelar = new javax.swing.JButton();
         botaoVoltar = new javax.swing.JButton();
+        botaoAtivar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -252,6 +257,13 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
             }
         });
 
+        botaoAtivar.setText("Ativar");
+        botaoAtivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoAtivarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -263,13 +275,15 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(botaoVoltar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                         .addComponent(botaoNovo)
-                        .addGap(35, 35, 35)
+                        .addGap(18, 18, 18)
                         .addComponent(botaoSalvar)
-                        .addGap(27, 27, 27)
+                        .addGap(37, 37, 37)
+                        .addComponent(botaoAtivar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botaoExcluir)
-                        .addGap(26, 26, 26)
+                        .addGap(18, 18, 18)
                         .addComponent(botaoCancelar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
@@ -289,7 +303,8 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                     .addComponent(botaoCancelar)
                     .addComponent(botaoExcluir)
                     .addComponent(botaoNovo)
-                    .addComponent(botaoVoltar))
+                    .addComponent(botaoVoltar)
+                    .addComponent(botaoAtivar))
                 .addContainerGap())
         );
 
@@ -446,7 +461,11 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
 
         if (checkAtivos.isSelected()) {
             listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
         }
 
@@ -475,14 +494,16 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
                 this.textDescricao.setText("");
                 this.comboBoxUF.setSelectedIndex(0);
                 this.textCidade.setText("");
-                this.botaoExcluir.setEnabled(true);
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
                 listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
             } else {
                 this.textNome.setText("");
                 this.textDescricao.setText("");
                 this.comboBoxUF.setSelectedIndex(0);
                 this.textCidade.setText("");
-                this.botaoExcluir.setEnabled(false);
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 listaDeFaculdades = controleFaculdade.listaFaculdadesInativas();
             }
             this.atualizaTabelaFaculdades(listaDeFaculdades);
@@ -495,7 +516,11 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
         try {
             if (checkAtivos.isSelected()) {
                 listaDeFaculdades = controleFaculdade.listaFaculdadesAtivasByNome(textNome.getText());
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
             } else {
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 listaDeFaculdades = controleFaculdade.listaFaculdadesInativasByNome(textNome.getText());
             }
             this.atualizaTabelaFaculdades(listaDeFaculdades);
@@ -510,7 +535,32 @@ public class VIEW_Faculdade extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botaoVoltarActionPerformed
 
+    private void botaoAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtivarActionPerformed
+        int index = tabelaFaculdades.getSelectedRow();
+
+        if (index >= 0 && index < listaDeFaculdades.size()) {
+            try {
+                int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente ativar: " + textNome.getText() + "?", "Ativar", JOptionPane.YES_OPTION);
+
+                if (resposta == JOptionPane.YES_OPTION) {
+                    BEAN_Faculdade faculdadeSelecionada = listaDeFaculdades.get(index);
+                    controleFaculdade.ativaFaculdade(faculdadeSelecionada);
+                    JOptionPane.showMessageDialog(null, "Faculdade >  " + textNome.getText() + "  < ativada com sucesso! ");
+
+                    listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
+                    this.atualizaTabelaFaculdades(listaDeFaculdades);
+                    this.botaoCancelarActionPerformed(evt);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(VIEW_Faculdade.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir.");
+        }
+    }//GEN-LAST:event_botaoAtivarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoAtivar;
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoExcluir;
     private javax.swing.JButton botaoNovo;

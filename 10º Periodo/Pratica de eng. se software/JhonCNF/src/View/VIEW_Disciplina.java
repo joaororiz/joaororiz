@@ -43,7 +43,11 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
 
         if (checkAtivos.isSelected()) {
             listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
         }
 
@@ -115,6 +119,7 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
         botaoExcluir = new javax.swing.JButton();
         botaoCancelar = new javax.swing.JButton();
         botaoVoltar = new javax.swing.JButton();
+        botaoAtivar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -156,7 +161,7 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
                             .addComponent(textNome, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botaoPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 35, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -266,6 +271,13 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
             }
         });
 
+        botaoAtivar.setText("Ativar");
+        botaoAtivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoAtivarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -277,11 +289,13 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(botaoVoltar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(botaoNovo)
                         .addGap(35, 35, 35)
                         .addComponent(botaoSalvar)
-                        .addGap(27, 27, 27)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoAtivar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botaoExcluir)
                         .addGap(26, 26, 26)
                         .addComponent(botaoCancelar))
@@ -303,7 +317,8 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
                     .addComponent(botaoCancelar)
                     .addComponent(botaoExcluir)
                     .addComponent(botaoNovo)
-                    .addComponent(botaoVoltar))
+                    .addComponent(botaoVoltar)
+                    .addComponent(botaoAtivar))
                 .addContainerGap())
         );
 
@@ -466,7 +481,11 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
 
         if (checkAtivos.isSelected()) {
             listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+            botaoExcluir.setVisible(true);
+            botaoAtivar.setVisible(false);
         } else {
+            botaoAtivar.setVisible(true);
+            botaoExcluir.setVisible(false);
             listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
         }
 
@@ -488,12 +507,16 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
                 this.textDescricao.setText("");
                 this.comboBoxFaculdade.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(true);
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
                 this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
             } else {
                 this.textNome.setText("");
                 this.textDescricao.setText("");
                 this.comboBoxFaculdade.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(false);
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 this.listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
             }
             this.atualizaTabelaDisciplinas(listaDeDisciplinas);
@@ -506,7 +529,11 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
         try {
             if (checkAtivos.isSelected()) {
                 listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivasByNome(textNome.getText());
+                botaoExcluir.setVisible(true);
+                botaoAtivar.setVisible(false);
             } else {
+                botaoAtivar.setVisible(true);
+                botaoExcluir.setVisible(false);
                 listaDeDisciplinas = controleDisciplina.listaDisciplinasInativasByNome(textNome.getText());
             }
             this.atualizaTabelaDisciplinas(listaDeDisciplinas);
@@ -521,7 +548,32 @@ public class VIEW_Disciplina extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botaoVoltarActionPerformed
 
+    private void botaoAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAtivarActionPerformed
+        int index = tabelaDisciplinas.getSelectedRow();
+
+        if (index >= 0 && index < listaDeDisciplinas.size()) {
+            try {
+                int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente ativar: " + textNome.getText() + "?", "Ativar", JOptionPane.YES_OPTION);
+
+                if (resposta == JOptionPane.YES_OPTION) {
+                    BEAN_Disciplina disciplinaSelecionada = listaDeDisciplinas.get(tabelaDisciplinas.getSelectedRow());
+                    controleDisciplina.ativaDisciplina(disciplinaSelecionada);
+                    JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < ativada com sucesso! ");
+
+                    this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                    this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+                    this.botaoCancelarActionPerformed(evt);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(VIEW_Disciplina.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir.");
+        }
+    }//GEN-LAST:event_botaoAtivarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoAtivar;
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoExcluir;
     private javax.swing.JButton botaoNovo;

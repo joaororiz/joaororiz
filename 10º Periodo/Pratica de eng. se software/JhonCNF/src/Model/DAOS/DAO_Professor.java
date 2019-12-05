@@ -34,6 +34,10 @@ public class DAO_Professor {
     public void deleteProfessor(BEAN_Professor professor) throws SQLException {
         MySQLDAO.executeQuery("UPDATE professor SET statusProfessor=0 WHERE idProfessor = ?", professor.getIdProfessor());
     }
+    
+    public void ativaProfessor(BEAN_Professor professor) throws SQLException {
+        MySQLDAO.executeQuery("UPDATE professor SET statusProfessor=1 WHERE idProfessor = ?", professor.getIdProfessor());
+    }
 
     public ArrayList<BEAN_Professor> findAllProfessoresAtivos() {
         return listaProfessores("SELECT * FROM professor WHERE statusProfessor=1 ORDER BY nomeProfessor");

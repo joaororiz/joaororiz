@@ -34,6 +34,10 @@ public class DAO_Faculdade {
     public void deleteFaculdade(BEAN_Faculdade faculdade) throws SQLException {
         MySQLDAO.executeQuery("UPDATE faculdade SET statusFaculdade=0 WHERE idFaculdade=?", faculdade.getIdFaculdade());
     }
+    
+    public void ativaFaculdade(BEAN_Faculdade faculdade) throws SQLException {
+        MySQLDAO.executeQuery("UPDATE faculdade SET statusFaculdade=1 WHERE idFaculdade=?", faculdade.getIdFaculdade());
+    }
 
     public ArrayList<BEAN_Faculdade> findAllFaculdades() {
         return listaFaculdades("SELECT * FROM faculdade ORDER BY nomeFaculdade");

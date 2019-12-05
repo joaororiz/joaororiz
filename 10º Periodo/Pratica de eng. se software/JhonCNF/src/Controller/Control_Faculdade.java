@@ -21,6 +21,10 @@ public class Control_Faculdade {
     public void deleteFaculdade(BEAN_Faculdade faculdade) throws SQLException {
         DAO_Faculdade.getInstanceFaculdade().deleteFaculdade(faculdade);
     }
+    
+    public void ativaFaculdade(BEAN_Faculdade faculdade) throws SQLException {
+        DAO_Faculdade.getInstanceFaculdade().ativaFaculdade(faculdade);
+    }
 
     public ArrayList<BEAN_Faculdade> listaFaculdades() {
         return DAO_Faculdade.getInstanceFaculdade().findAllFaculdades();
