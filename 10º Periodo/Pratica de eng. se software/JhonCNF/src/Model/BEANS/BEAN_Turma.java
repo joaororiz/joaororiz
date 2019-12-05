@@ -7,8 +7,8 @@ public class BEAN_Turma {
     private int idTurma;
     private String nomeTurma;
     private String descricaoTurma;
-    private int disciplina_idDisciplina;
-    private int professor_idProfessor;
+    private int idDisciplina;
+    private int idProfessor;
     private String statusTurma;
 
     public BEAN_Turma() {
@@ -18,8 +18,8 @@ public class BEAN_Turma {
         this.idTurma = idTurma;
         this.nomeTurma = nomeTurma;
         this.descricaoTurma = descricaoTurma;
-        this.disciplina_idDisciplina = disciplina_idDisciplina;
-        this.professor_idProfessor = professor_idProfessor;
+        this.idDisciplina = disciplina_idDisciplina;
+        this.idProfessor = professor_idProfessor;
         this.statusTurma = statusTurma;
     }
 
@@ -47,20 +47,20 @@ public class BEAN_Turma {
         this.descricaoTurma = descricaoTurma;
     }
 
-    public int getDisciplina_idDisciplina() {
-        return disciplina_idDisciplina;
+    public int getIdDisciplina() {
+        return idDisciplina;
     }
 
-    public void setDisciplina_idDisciplina(int disciplina_idDisciplina) {
-        this.disciplina_idDisciplina = disciplina_idDisciplina;
+    public void setIdDisciplina(int idDisciplina) {
+        this.idDisciplina = idDisciplina;
     }
 
-    public int getProfessor_idProfessor() {
-        return professor_idProfessor;
+    public int getIdProfessor() {
+        return idProfessor;
     }
 
-    public void setProfessor_idProfessor(int professor_idProfessor) {
-        this.professor_idProfessor = professor_idProfessor;
+    public void setIdProfessor(int idProfessor) {
+        this.idProfessor = idProfessor;
     }
 
     public String getStatusTurma() {

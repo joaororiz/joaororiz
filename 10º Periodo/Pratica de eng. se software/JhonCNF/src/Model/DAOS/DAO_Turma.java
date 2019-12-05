@@ -22,10 +22,10 @@ public class DAO_Turma {
         return instance;
     }
 
-    public long createTurma(BEAN_Turma turma, BEAN_Aluno aluno) throws SQLException {
-        this.createAuxTurmaAluno(aluno.getIdAluno(), turma.getIdTurma());
+    public long createTurma(BEAN_Turma turma) throws SQLException {
+//        this.createAuxTurmaAluno(aluno.getIdAluno(), turma.getIdTurma());
         String query = "INSERT INTO turma (nomeTurma, descricaoTurma, disciplina_idDisciplina, professor_idProfessor, statusTurma) VALUES (?,?,?,?,?)";
-        return MySQLDAO.executeQuery(query, turma.getNomeTurma(), turma.getDescricaoTurma(), turma.getDisciplina_idDisciplina(), turma.getProfessor_idProfessor(), turma.getStatusTurma());
+        return MySQLDAO.executeQuery(query, turma.getNomeTurma(), turma.getDescricaoTurma(), turma.getIdDisciplina(), turma.getIdProfessor(), turma.getStatusTurma());
     }
 
     private long createAuxTurmaAluno(int idAluno, int idTurma) throws SQLException {
@@ -36,7 +36,7 @@ public class DAO_Turma {
     public void updateTurma(BEAN_Turma turma, BEAN_Aluno aluno) throws SQLException {
 //          this.updateAuxTurmaAluno(aluno.getIdAluno(), turma.getIdTurma());
         String query = "UPDATE turma SET nomeTurma=?, descricaoTurma=?, disciplina_idDisciplina=?, professor_idProfessor=?, statusTurma=? WHERE idTurma=?";
-        MySQLDAO.executeQuery(query, turma.getNomeTurma(), turma.getDescricaoTurma(), turma.getDisciplina_idDisciplina(), turma.getProfessor_idProfessor(), turma.getStatusTurma(), turma.getIdTurma());
+        MySQLDAO.executeQuery(query, turma.getNomeTurma(), turma.getDescricaoTurma(), turma.getIdDisciplina(), turma.getIdProfessor(), turma.getStatusTurma(), turma.getIdTurma());
     }
 
     private long updateAuxTurmaAluno(int idAluno, int idTurma) throws SQLException {

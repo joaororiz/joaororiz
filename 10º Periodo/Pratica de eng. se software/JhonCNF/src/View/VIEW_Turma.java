@@ -1,9 +1,15 @@
 package View;
 
+import Controller.Control_Aluno;
 import Controller.Control_Disciplina;
 import Controller.Control_Faculdade;
+import Controller.Control_Professor;
+import Controller.Control_Turma;
+import Model.BEANS.BEAN_Aluno;
 import Model.BEANS.BEAN_Disciplina;
 import Model.BEANS.BEAN_Faculdade;
+import Model.BEANS.BEAN_Professor;
+import Model.BEANS.BEAN_Turma;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,22 +25,30 @@ import javax.swing.table.DefaultTableModel;
  */
 public class VIEW_Turma extends javax.swing.JFrame {
 
-    List<BEAN_Faculdade> listaDeFaculdades;
-    Control_Faculdade controleFaculdade = new Control_Faculdade();
+    List<BEAN_Turma> listaDeTurmas;
+    Control_Turma controleTurma = new Control_Turma();
+
+    List<BEAN_Professor> listaDeProfessores;
+    Control_Professor controleProfessor = new Control_Professor();
+
+    List<BEAN_Aluno> listaDeAlunos;
+    Control_Aluno controleAluno = new Control_Aluno();
 
     List<BEAN_Disciplina> listaDeDisciplinas;
     Control_Disciplina controleDisciplina = new Control_Disciplina();
+
     private boolean boolClikedTabela = true;
 
     public VIEW_Turma() throws SQLException {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setTitle("Tela disciplina");
+        this.setTitle("Tela turma");
 
         this.textNome.requestFocus();
 
         this.textDescricao.setEnabled(false);
-        this.comboBoxFaculdade.setEnabled(false);
+        this.comboBoxDisciplinas.setEnabled(false);
+        this.comboBoxProfessores.setEnabled(false);
 
         this.botaoSalvar.setEnabled(false);
         this.botaoCancelar.setEnabled(false);
@@ -42,55 +56,84 @@ public class VIEW_Turma extends javax.swing.JFrame {
         this.checkAtivos.setSelected(true);
 
         if (checkAtivos.isSelected()) {
-            listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+            listaDeTurmas = controleTurma.listaTurmasAtivas();
         } else {
-            listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
+            listaDeTurmas = controleTurma.listaTurmasInativas();
         }
 
-        listaDeFaculdades = controleFaculdade.listaFaculdadesAtivas();
-
-        this.atualizaTabelaDisciplinas(listaDeDisciplinas);
-        this.atualizaComboBoxfaculdades(listaDeFaculdades);
+        this.atualizaTabelaTurmas(listaDeTurmas);
+        this.atualizaComboBoxDisciplinas(controleDisciplina.listaDisciplinasAtivas());
+        this.atualizaComboBoxProfesores(controleProfessor.listaProfessoresAtivos());
+        this.atualizaTabelaTodosAlunos(controleAluno.listaAlunoesAtivos());
     }
 
-    public void atualizaComboBoxfaculdades(List<BEAN_Faculdade> listFaculdades) {
+    public void atualizaComboBoxDisciplinas(List<BEAN_Disciplina> listaDisciplinas) {
 
         int cont = 0;
-        while (cont < listaDeFaculdades.size()) {
-            comboBoxFaculdade.addItem(listaDeFaculdades.get(cont).getNomeFaculdade());
+        while (cont < listaDisciplinas.size()) {
+            comboBoxDisciplinas.addItem(listaDisciplinas.get(cont).getNomeDisciplina());
             cont++;
         }
     }
 
-    public void atualizaTabelaDisciplinas(List<BEAN_Disciplina> listDisciplinas) throws SQLException {
+    public void atualizaComboBoxProfesores(List<BEAN_Professor> listaProfessores) {
 
-        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Nome", "Descrição", "Faculdade", "Status"}, 0);
+        int cont = 0;
+        while (cont < listaProfessores.size()) {
+            comboBoxProfessores.addItem(listaProfessores.get(cont).getNomeProfessor());
+            cont++;
+        }
+    }
 
-        for (int i = 0; i < listDisciplinas.size(); i++) {
-            String nomefaculdade = null;
-            List<BEAN_Faculdade> listaDeFaculdadesTotal = controleFaculdade.listaFaculdades();
+    public void atualizaTabelaTodosAlunos(List<BEAN_Aluno> listAlunos) throws SQLException {
 
-            for (BEAN_Faculdade faculdade : listaDeFaculdadesTotal) {
-                if (faculdade.getIdFaculdade() == listDisciplinas.get(i).getIdFaculdade()) {
-                    nomefaculdade = faculdade.getNomeFaculdade();
-                }
-            }
-            modelo.addRow(new Object[]{listDisciplinas.get(i).getNomeDisciplina(),
-                listDisciplinas.get(i).getDescricaoDisciplina(),
-                nomefaculdade,
-                listDisciplinas.get(i).getStatusDisciplina().equals("1") ? "Ativo" : "Inativa"});
+        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Nome"}, 0);
+
+        for (int i = 0; i < listAlunos.size(); i++) {
+            modelo.addRow(new Object[]{listAlunos.get(i).getNomeAluno(),});
         }
 
-        tabelaDisciplinas.setModel(modelo);
-        tabelaDisciplinas.getColumnModel().getColumn(0).setWidth(100);
-        tabelaDisciplinas.getColumnModel().getColumn(1).setWidth(20);
-        tabelaDisciplinas.getColumnModel().getColumn(2).setWidth(10);
-        tabelaDisciplinas.getColumnModel().getColumn(3).setWidth(10);
+        tabelaTodosAlunos.setModel(modelo);
+    }
+
+    public void atualizaTabelaTurmas(List<BEAN_Turma> listTurmas) throws SQLException {
+
+        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Nome", "Descrição", "Disciplina", "Professor", "Status"}, 0);
+
+        for (int i = 0; i < listTurmas.size(); i++) {
+            String nomedisciplina = null;
+            String nomeprofessor = null;
+            
+            listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+            for (BEAN_Disciplina disciplinas : listaDeDisciplinas) {
+                if (disciplinas.getIdDisciplina()== listTurmas.get(i).getIdDisciplina()) {
+                    nomedisciplina = disciplinas.getNomeDisciplina();
+                }
+            }
+            
+            listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+            for (BEAN_Professor professores : listaDeProfessores) {
+                if (professores.getIdProfessor()== listTurmas.get(i).getIdProfessor()) {
+                    nomeprofessor = professores.getNomeProfessor();
+                }
+            }
+
+            modelo.addRow(new Object[]{listTurmas.get(i).getNomeTurma(),
+                listTurmas.get(i).getDescricaoTurma(),
+                nomedisciplina,
+                nomeprofessor,
+                listTurmas.get(i).getStatusTurma().equals("1") ? "Ativo" : "Inativa"});
+        }
+
+        tabelaTurmas.setModel(modelo);
+        tabelaTurmas.getColumnModel().getColumn(0).setWidth(100);
+        tabelaTurmas.getColumnModel().getColumn(1).setWidth(20);
+        tabelaTurmas.getColumnModel().getColumn(2).setWidth(10);
+        tabelaTurmas.getColumnModel().getColumn(3).setWidth(10);
 
         DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
         centralizado.setHorizontalAlignment(SwingConstants.CENTER);
-        tabelaDisciplinas.getColumnModel().getColumn(2).setCellRenderer(centralizado);
-        tabelaDisciplinas.getColumnModel().getColumn(3).setCellRenderer(centralizado);
+        tabelaTurmas.getColumnModel().getColumn(4).setCellRenderer(centralizado);
     }
 
     @SuppressWarnings("unchecked")
@@ -106,25 +149,36 @@ public class VIEW_Turma extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         checkAtivos = new javax.swing.JCheckBox();
         botaoPesquisa = new javax.swing.JLabel();
-        comboBoxFaculdade = new javax.swing.JComboBox<>();
+        comboBoxDisciplinas = new javax.swing.JComboBox<>();
+        comboBoxProfessores = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabelaDisciplinas = new javax.swing.JTable();
+        tabelaTurmas = new javax.swing.JTable();
+        botaoVoltar = new javax.swing.JButton();
         botaoNovo = new javax.swing.JButton();
         botaoSalvar = new javax.swing.JButton();
         botaoExcluir = new javax.swing.JButton();
         botaoCancelar = new javax.swing.JButton();
-        botaoVoltar = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tabelaAlunosDaTurma = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tabelaTodosAlunos = new javax.swing.JTable();
+        botaoRemoveDaTurma = new javax.swing.JButton();
+        botaoAddNaTurma = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cadastro de Disciplinas"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cadastro de Turmas"));
 
         jLabel1.setText("Nome");
 
         jLabel2.setText("Descrição");
 
-        jLabel3.setText("Faculdade");
+        jLabel3.setText("Disciplina");
 
         checkAtivos.setText("Ativos");
         checkAtivos.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -140,6 +194,8 @@ public class VIEW_Turma extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Professor");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -147,6 +203,8 @@ public class VIEW_Turma extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(comboBoxDisciplinas, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -155,18 +213,16 @@ public class VIEW_Turma extends javax.swing.JFrame {
                                 .addComponent(checkAtivos))
                             .addComponent(textNome, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botaoPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 35, Short.MAX_VALUE))
+                        .addComponent(botaoPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(comboBoxFaculdade, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel4)
+                            .addComponent(comboBoxProfessores, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addContainerGap())
-                            .addComponent(textDescricao)))))
+                            .addComponent(jLabel2)
+                            .addComponent(textDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,35 +234,41 @@ public class VIEW_Turma extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(botaoPesquisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(textNome))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textDescricao)
-                    .addComponent(comboBoxFaculdade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboBoxDisciplinas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboBoxProfessores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textDescricao)
+                        .addContainerGap())))
         );
 
-        tabelaDisciplinas.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaTurmas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Nome", "Descrição", "Faculdade", "Status"
+                "Nome", "Descrição", "Disciplina", "Professor", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -217,19 +279,54 @@ public class VIEW_Turma extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tabelaDisciplinas.getTableHeader().setReorderingAllowed(false);
-        tabelaDisciplinas.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabelaTurmas.getTableHeader().setReorderingAllowed(false);
+        tabelaTurmas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelaDisciplinasMouseClicked(evt);
+                tabelaTurmasMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tabelaDisciplinas);
-        if (tabelaDisciplinas.getColumnModel().getColumnCount() > 0) {
-            tabelaDisciplinas.getColumnModel().getColumn(0).setPreferredWidth(70);
-            tabelaDisciplinas.getColumnModel().getColumn(1).setPreferredWidth(25);
-            tabelaDisciplinas.getColumnModel().getColumn(2).setPreferredWidth(3);
-            tabelaDisciplinas.getColumnModel().getColumn(3).setPreferredWidth(3);
+        jScrollPane1.setViewportView(tabelaTurmas);
+        if (tabelaTurmas.getColumnModel().getColumnCount() > 0) {
+            tabelaTurmas.getColumnModel().getColumn(0).setPreferredWidth(70);
+            tabelaTurmas.getColumnModel().getColumn(1).setPreferredWidth(25);
+            tabelaTurmas.getColumnModel().getColumn(2).setPreferredWidth(20);
+            tabelaTurmas.getColumnModel().getColumn(3).setPreferredWidth(20);
+            tabelaTurmas.getColumnModel().getColumn(4).setPreferredWidth(3);
         }
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        botaoVoltar.setText("Voltar");
+        botaoVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoVoltarActionPerformed(evt);
+            }
+        });
 
         botaoNovo.setText("Novo");
         botaoNovo.addActionListener(new java.awt.event.ActionListener() {
@@ -259,52 +356,131 @@ public class VIEW_Turma extends javax.swing.JFrame {
             }
         });
 
-        botaoVoltar.setText("Voltar");
-        botaoVoltar.addActionListener(new java.awt.event.ActionListener() {
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Alunos"));
+
+        tabelaAlunosDaTurma.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Nome"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tabelaAlunosDaTurma);
+
+        tabelaTodosAlunos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Nome"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tabelaTodosAlunos);
+        if (tabelaTodosAlunos.getColumnModel().getColumnCount() > 0) {
+            tabelaTodosAlunos.getColumnModel().getColumn(0).setPreferredWidth(50);
+        }
+
+        botaoRemoveDaTurma.setText("<<");
+        botaoRemoveDaTurma.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botaoVoltarActionPerformed(evt);
+                botaoRemoveDaTurmaActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        botaoAddNaTurma.setText(">>");
+        botaoAddNaTurma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoAddNaTurmaActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Todos os alunos");
+
+        jLabel6.setText("Alunos da turma");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(botaoVoltar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                        .addComponent(botaoNovo)
-                        .addGap(35, 35, 35)
-                        .addComponent(botaoSalvar)
-                        .addGap(27, 27, 27)
-                        .addComponent(botaoExcluir)
-                        .addGap(26, 26, 26)
-                        .addComponent(botaoCancelar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(botaoRemoveDaTurma, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botaoAddNaTurma, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(118, 118, 118))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel6)
+                .addGap(186, 186, 186))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botaoSalvar)
-                    .addComponent(botaoCancelar)
-                    .addComponent(botaoExcluir)
-                    .addComponent(botaoNovo)
-                    .addComponent(botaoVoltar))
-                .addContainerGap())
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(61, 61, 61)
+                        .addComponent(botaoAddNaTurma)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoRemoveDaTurma))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(7, 7, 7)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -313,14 +489,36 @@ public class VIEW_Turma extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(botaoVoltar)
+                        .addGap(38, 38, 38)
+                        .addComponent(botaoNovo)
+                        .addGap(56, 56, 56)
+                        .addComponent(botaoSalvar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botaoExcluir)
+                        .addGap(41, 41, 41)
+                        .addComponent(botaoCancelar))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botaoSalvar)
+                    .addComponent(botaoCancelar)
+                    .addComponent(botaoExcluir)
+                    .addComponent(botaoNovo)
+                    .addComponent(botaoVoltar))
+                .addContainerGap())
         );
 
         pack();
@@ -329,10 +527,12 @@ public class VIEW_Turma extends javax.swing.JFrame {
     private void botaoCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCancelarActionPerformed
         this.textNome.setText("");
         this.textDescricao.setText("");
-        this.comboBoxFaculdade.setSelectedIndex(0);
+        this.comboBoxDisciplinas.setSelectedIndex(0);
+        this.comboBoxProfessores.setSelectedIndex(0);
 
         this.textDescricao.setEnabled(false);
-        this.comboBoxFaculdade.setEnabled(false);
+        this.comboBoxDisciplinas.setEnabled(false);
+        this.comboBoxProfessores.setEnabled(false);
 
         this.botaoNovo.setEnabled(true);
         this.botaoExcluir.setEnabled(true);
@@ -344,63 +544,70 @@ public class VIEW_Turma extends javax.swing.JFrame {
 
         if (textNome.getText().isEmpty() || textDescricao.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Os campos não podem ficar vazios!", "Erro, verifique a mensagem abaixo", 0);
-        } else if (comboBoxFaculdade.getSelectedIndex() == -1) {
-            JOptionPane.showMessageDialog(null, "Selecione uma faculdade!", "Erro, verifique a mensagem abaixo", 0);
+        } else if (comboBoxDisciplinas.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Selecione uma disciplina!", "Erro, verifique a mensagem abaixo", 0);
+        } else if (comboBoxProfessores.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(null, "Selecione um profesor!", "Erro, verifique a mensagem abaixo", 0);
         } else {
             try {
                 if (!boolClikedTabela) {
-                    int idFaculdade = 0;
+                    int idProfessor = 0;
+                    int idDisciplina = 0;
 
-                    for (BEAN_Faculdade faculdades : listaDeFaculdades) {
-                        if (faculdades.getNomeFaculdade().equals(comboBoxFaculdade.getSelectedItem().toString())) {
-                            idFaculdade = faculdades.getIdFaculdade();
+                    listaDeProfessores = controleProfessor.listaProfessoresAtivos();
+                    for (BEAN_Professor professores : listaDeProfessores) {
+                        if (professores.getNomeProfessor().equals(comboBoxProfessores.getSelectedItem().toString())) {
+                            idProfessor = professores.getIdProfessor();
                         }
                     }
-
-                    BEAN_Disciplina disciplina = new BEAN_Disciplina(0, textNome.getText(), textDescricao.getText(), idFaculdade, "1");
-                    controleDisciplina.addDisciplina(disciplina);
+                    
+                    listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                    for (BEAN_Disciplina disciplinas : listaDeDisciplinas) {
+                        if (disciplinas.getNomeDisciplina().equals(comboBoxDisciplinas.getSelectedItem().toString())) {
+                            idDisciplina = disciplinas.getIdFaculdade();
+                        }
+                    }
+                    
+                    BEAN_Turma turma = new BEAN_Turma(0, textNome.getText(), textDescricao.getText(), idDisciplina, idProfessor, "1");
+                    controleTurma.addTurma(turma);
 
                     JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < inserida com sucesso! ");
 
-                    listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
-                    this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+                    listaDeTurmas = controleTurma.listaTurmasAtivas();
+                    this.atualizaTabelaTurmas(listaDeTurmas);
                     this.textNome.setText("");
                     this.textDescricao.setText("");
-                    this.comboBoxFaculdade.setSelectedIndex(0);
+                    this.comboBoxDisciplinas.setSelectedIndex(0);
+                    this.comboBoxProfessores.setSelectedIndex(0);
                     this.botaoCancelarActionPerformed(evt);
                 } else {
-                    if (tabelaDisciplinas.getSelectedRow() != -1) {
-                        int index = tabelaDisciplinas.getSelectedRow();
-                        this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
-                        BEAN_Disciplina disciplinaSelected = listaDeDisciplinas.get(index);
-
-                        for (BEAN_Disciplina disciplinas : listaDeDisciplinas) {
-                            if (disciplinas.getIdDisciplina() == disciplinaSelected.getIdDisciplina()) {
-                                int idFaculdade = 0;
-
-                                for (BEAN_Faculdade faculdades : listaDeFaculdades) {
-                                    if (faculdades.getNomeFaculdade().equals(comboBoxFaculdade.getSelectedItem().toString())) {
-                                        idFaculdade = faculdades.getIdFaculdade();
-                                    }
-                                }
-                                disciplinaSelected.setIdDisciplina(disciplinas.getIdDisciplina());
-                                disciplinaSelected.setNomeDisciplina(textNome.getText());
-                                disciplinaSelected.setDescricaoDisciplina(textDescricao.getText());
-                                disciplinaSelected.setIdFaculdade(idFaculdade);
-                                disciplinaSelected.setStatusDisciplina("1");
-
-                                controleDisciplina.updateDisciplina(disciplinaSelected);
-                                JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < alterada com sucesso! ");
-
-                                listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
-                                this.atualizaTabelaDisciplinas(listaDeDisciplinas);
-                                this.textNome.setText("");
-                                this.textDescricao.setText("");
-                                this.comboBoxFaculdade.setSelectedIndex(0);
-                                this.botaoCancelarActionPerformed(evt);
-                            }
-                        }
-                    }
+//                    if (tabelaTurmas.getSelectedRow() != -1) {
+//                        int index = tabelaTurmas.getSelectedRow();
+//                        this.listaDeTurmas = controleTurma.listaTurmasAtivas();
+//                        BEAN_Turma turmaSelected = listaDeTurmas.get(index);
+//
+//                        for (BEAN_Turma turmas : listaDeTurmas) {
+//                            if (turmas.getIdDisciplina() == turmaSelected.getIdDisciplina()) {
+//                                int idFaculdade = 0;
+//
+//                                turmaSelected.setIdDisciplina(turmas.getIdDisciplina());
+//                                turmaSelected.setNomeDisciplina(textNome.getText());
+//                                turmaSelected.setDescricaoDisciplina(textDescricao.getText());
+//                                turmaSelected.setIdFaculdade(idFaculdade);
+//                                turmaSelected.setStatusDisciplina("1");
+//
+//                                controleTurma.updateTurma(turmaSelected);
+//                                JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < alterada com sucesso! ");
+//
+//                                listaDeTurmas = controleTurma.listaTurmasAtivas();
+//                                this.atualizaTabelaTurmas(listaDeTurmas);
+//                                this.textNome.setText("");
+//                                this.textDescricao.setText("");
+//                                this.comboBoxDisciplinas.setSelectedIndex(0);
+//                                this.botaoCancelarActionPerformed(evt);
+//                            }
+//                        }
+//                    }
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
@@ -412,7 +619,8 @@ public class VIEW_Turma extends javax.swing.JFrame {
 
         this.textNome.setEnabled(true);
         this.textDescricao.setEnabled(true);
-        this.comboBoxFaculdade.setEnabled(true);
+        this.comboBoxDisciplinas.setEnabled(true);
+        this.comboBoxProfessores.setEnabled(true);
 
         this.textNome.setText("");
         this.textDescricao.setText("");
@@ -429,19 +637,19 @@ public class VIEW_Turma extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoNovoActionPerformed
 
     private void botaoExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoExcluirActionPerformed
-        int index = tabelaDisciplinas.getSelectedRow();
+        int index = tabelaTurmas.getSelectedRow();
 
-        if (index >= 0 && index < listaDeDisciplinas.size()) {
+        if (index >= 0 && index < listaDeTurmas.size()) {
             try {
                 int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir: " + textNome.getText() + "?", "Excluir", JOptionPane.YES_OPTION);
 
                 if (resposta == JOptionPane.YES_OPTION) {
-                    BEAN_Disciplina disciplinaSelecionada = listaDeDisciplinas.get(tabelaDisciplinas.getSelectedRow());
-                    controleDisciplina.deleteDisciplina(disciplinaSelecionada);
+                    BEAN_Turma turmaSelecionada = listaDeTurmas.get(tabelaTurmas.getSelectedRow());
+                    controleTurma.deleteTurma(turmaSelecionada);
                     JOptionPane.showMessageDialog(null, "Disciplina >  " + textNome.getText() + "  < excluída com sucesso! ");
 
-                    this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
-                    this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+                    this.listaDeTurmas = controleTurma.listaTurmasAtivas();
+                    this.atualizaTabelaTurmas(listaDeTurmas);
                     this.botaoCancelarActionPerformed(evt);
                 }
             } catch (SQLException ex) {
@@ -452,11 +660,12 @@ public class VIEW_Turma extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botaoExcluirActionPerformed
 
-    private void tabelaDisciplinasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaDisciplinasMouseClicked
+    private void tabelaTurmasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaTurmasMouseClicked
 
         this.textNome.setEnabled(true);
         this.textDescricao.setEnabled(true);
-        this.comboBoxFaculdade.setEnabled(true);
+        this.comboBoxDisciplinas.setEnabled(true);
+        this.comboBoxProfessores.setEnabled(true);
 
         this.botaoSalvar.setEnabled(true);
         this.botaoCancelar.setEnabled(true);
@@ -465,38 +674,40 @@ public class VIEW_Turma extends javax.swing.JFrame {
         this.boolClikedTabela = true;
 
         if (checkAtivos.isSelected()) {
-            listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+            listaDeTurmas = controleTurma.listaTurmasAtivas();
         } else {
-            listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
+            listaDeTurmas = controleTurma.listaTurmasInativas();
         }
 
-        int index = tabelaDisciplinas.getSelectedRow();
+        int index = tabelaTurmas.getSelectedRow();
 
-        if (index >= 0 && tabelaDisciplinas.getSelectedRow() < listaDeDisciplinas.size()) {
-            BEAN_Disciplina disciplina = listaDeDisciplinas.get(index);
+        if (index >= 0 && tabelaTurmas.getSelectedRow() < listaDeTurmas.size()) {
+            BEAN_Turma turma = listaDeTurmas.get(index);
 
-            this.textNome.setText(disciplina.getNomeDisciplina());
-            this.textDescricao.setText(disciplina.getDescricaoDisciplina());
-            this.comboBoxFaculdade.setSelectedIndex(0);
+            this.textNome.setText(turma.getNomeTurma());
+            this.textDescricao.setText(turma.getDescricaoTurma());
+            this.comboBoxDisciplinas.setSelectedIndex(0);
+            this.comboBoxProfessores.setSelectedIndex(0);
         }
-    }//GEN-LAST:event_tabelaDisciplinasMouseClicked
+    }//GEN-LAST:event_tabelaTurmasMouseClicked
 
     private void checkAtivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkAtivosMouseClicked
         try {
             if (checkAtivos.isSelected()) {
                 this.textNome.setText("");
                 this.textDescricao.setText("");
-                this.comboBoxFaculdade.setSelectedIndex(0);
+                this.comboBoxDisciplinas.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(true);
-                this.listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivas();
+                this.listaDeTurmas = controleTurma.listaTurmasAtivas();
             } else {
                 this.textNome.setText("");
                 this.textDescricao.setText("");
-                this.comboBoxFaculdade.setSelectedIndex(0);
+                this.comboBoxDisciplinas.setSelectedIndex(0);
+                this.comboBoxProfessores.setSelectedIndex(0);
                 this.botaoExcluir.setEnabled(false);
-                this.listaDeDisciplinas = controleDisciplina.listaDisciplinasInativas();
+                this.listaDeTurmas = controleTurma.listaTurmasAtivas();
             }
-            this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+            this.atualizaTabelaTurmas(listaDeTurmas);
         } catch (SQLException ex) {
             Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -505,11 +716,11 @@ public class VIEW_Turma extends javax.swing.JFrame {
     private void botaoPesquisaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botaoPesquisaMouseClicked
         try {
             if (checkAtivos.isSelected()) {
-                listaDeDisciplinas = controleDisciplina.listaDisciplinasAtivasByNome(textNome.getText());
+                listaDeTurmas = controleTurma.listaTurmasAtivasByNome(textNome.getText());
             } else {
-                listaDeDisciplinas = controleDisciplina.listaDisciplinasInativasByNome(textNome.getText());
+                listaDeTurmas = controleTurma.listaTurmasInativasByNome(textNome.getText());
             }
-            this.atualizaTabelaDisciplinas(listaDeDisciplinas);
+            this.atualizaTabelaTurmas(listaDeTurmas);
             this.textNome.setText("");
         } catch (SQLException ex) {
             Logger.getLogger(VIEW_Turma.class.getName()).log(Level.SEVERE, null, ex);
@@ -521,23 +732,42 @@ public class VIEW_Turma extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_botaoVoltarActionPerformed
 
+    private void botaoRemoveDaTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoRemoveDaTurmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botaoRemoveDaTurmaActionPerformed
+
+    private void botaoAddNaTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAddNaTurmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botaoAddNaTurmaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoAddNaTurma;
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoExcluir;
     private javax.swing.JButton botaoNovo;
     private javax.swing.JLabel botaoPesquisa;
+    private javax.swing.JButton botaoRemoveDaTurma;
     private javax.swing.JButton botaoSalvar;
     private javax.swing.JButton botaoVoltar;
     private javax.swing.JCheckBox checkAtivos;
-    private javax.swing.JComboBox<String> comboBoxFaculdade;
+    private javax.swing.JComboBox<String> comboBoxDisciplinas;
+    private javax.swing.JComboBox<String> comboBoxProfessores;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable tabelaDisciplinas;
+    private javax.swing.JTable tabelaAlunosDaTurma;
+    private javax.swing.JTable tabelaTodosAlunos;
+    private javax.swing.JTable tabelaTurmas;
     private javax.swing.JTextField textDescricao;
     private javax.swing.JTextField textNome;
     // End of variables declaration//GEN-END:variables

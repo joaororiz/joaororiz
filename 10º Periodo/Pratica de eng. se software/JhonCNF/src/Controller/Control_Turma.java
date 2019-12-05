@@ -11,8 +11,8 @@ public class Control_Turma {
     public Control_Turma() {
     }
 
-    public void addTurma(BEAN_Turma turma, BEAN_Aluno aluno)throws SQLException {
-        DAO_Turma.getInstanceTurma().createTurma(turma, aluno);
+    public void addTurma(BEAN_Turma turma)throws SQLException {
+        DAO_Turma.getInstanceTurma().createTurma(turma);
     }
 
     public void updateTurma(BEAN_Turma turma, BEAN_Aluno aluno) throws SQLException {
